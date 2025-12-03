@@ -1,5 +1,5 @@
 
-# ✔ README.md (English Version)
+# README.md
 
 ```markdown
 # Ca-MIL Demo
@@ -46,3 +46,4 @@ python main.py
 3. The core model is implemented in `model.py`.
 
 4. Feature extraction and clustering steps are organized in `feature.py`.
+
