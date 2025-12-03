@@ -1,0 +1,48 @@
+
+# ✔ README.md (English Version)
+
+```markdown
+# Ca-MIL Demo
+
+This repository provides a **simple demo** that shows how to use the `Ca-MIL` model.
+It includes a minimal end to end example that demonstrates:
+
+- Generating synthetic brain network data
+- Extracting FC based features using Ca-MIL
+- Performing instance level clustering with KMeans
+- Bag level classification using Multiple Instance Learning (MIL)
+- A clean and modular project structure suitable for future extensions
+
+This demo is intended only as a **basic usage example**, and can be easily adapted to real datasets.
+
+## Project Structure
+
+your_project/
+main.py             Entry point
+config.py           Hyperparameter configuration
+dataset.py          Synthetic dataset and dataloader generation
+feature.py          Feature extraction and KMeans clustering
+train.py            Training loop
+test.py             Testing pipeline
+utils.py            Utility functions
+model.py            Ca-MIL model implementation
+
+
+## How to Run
+
+python main.py
+
+
+## Notes
+
+1. This is a **minimal demo** using *random synthetic data*.
+   Replace the dataset generation in `dataset.py` with your real data loader when needed.
+
+2. Expected input shape for real data:
+```
+
+[batch_size, num_windows, ROI_num, timepoints]
+
+3. The core model is implemented in `model.py`.
+
+4. Feature extraction and clustering steps are organized in `feature.py`.
