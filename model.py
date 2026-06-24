@@ -20,6 +20,7 @@ class CaMIL(nn.Module):
         self.K = 1
         self.H = 1024
         self.Kmeans = 2
+        self.entropy_eps = 1e-12
 
         # Convolutional feature extraction
         self.conv1 = nn.Sequential(
@@ -117,6 +118,9 @@ class CaMIL(nn.Module):
         Y_hat = (Y_prob >= 0.5).float()
         return Y_prob, Y_hat
 
+    def soft_topk_entropy_loss(self, ent, tau):
+        weight = F.softmax(-ent / tau, dim = -1)  
+        return (weight * ent).sum(dim = -1).mean()
     def extract_features(self, x):
         x = x.unsqueeze(1)
         x = self.conv1(x)
@@ -125,17 +129,22 @@ class CaMIL(nn.Module):
 
         proj_q = self.query_conv(x)
         proj_k = self.key_conv(x).permute(0,1,2,4,3)
+        d_k = proj_q.shape[-1]
         energy = torch.einsum('...ik,...kj->...ij', proj_q, proj_k)
-        mean_energy = energy.mean(dim=2, keepdim=True)
-        mean_energy_expanded = mean_energy.expand_as(energy).clone()
-        energy = energy + mean_energy_expanded
-        attention = self.softmax(energy)
+        p= self.softmax(energy)
+        attention = self.softmax( energy / math.sqrt(d_k))
+        ent = -(p * torch.log(p + self.entropy_eps)).sum(dim = -1)
+        loss_sparse = self.soft_topk_entropy_loss(ent, tau = 0.3)
+        loss_diversity = -ent.std(dim = -1).mean()
+
+        loss =  loss_sparse+ loss_diversity
+
         proj_v = self.value_conv(x)
         out = torch.einsum('...ik,...kj->...ij', attention, proj_v)
         W_y = self.W_z(out)
         z = W_y + x
         x_global_FC = torch.einsum('...ik,...kj->...ij', z, z.transpose(-2,-1))
-        return x_global_FC, (energy - mean_energy).abs().mean()
+        return x_global_FC, loss
     def calculate_classification_error(self, FC, Y,cluster_centers):
 
         Y = Y.float()
