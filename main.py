@@ -1,4 +1,3 @@
-
 from dataset import get_dataloaders
 from model import CaMIL
 from train import train
@@ -11,7 +10,6 @@ def main():
     # create DataLoader
     train_loader, test_loader = get_dataloaders()
 
-    # 创建模型
     model = CaMIL(
         num_windows=NUM_WINDOWS,
         ROI_num=ROI_NUM,
