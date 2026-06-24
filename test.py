@@ -1,8 +1,6 @@
 import torch
 from config import DEVICE
 
-
-
 def test(model,test_loader,cluster_c):
     model.eval()
     test_loss = 0.
@@ -29,7 +27,6 @@ def test(model,test_loader,cluster_c):
 
         correct += (Y_hat == label_lis).sum().item()
         total += label_lis.size(0)
-
 
     acc = correct / total
     print(f"Test Accuracy = {acc:.4f}")
