@@ -35,17 +35,6 @@ def calculate_metrics_and_plot_roc(pred, labels):
     f1 = 2*pre*sen/(pre+sen)
     auc = roc_auc_score(true_labels_np, pred.cpu().numpy())
 
-    # plt.figure()
-    # plt.plot(fpr, tpr, color='blue', lw=2, label=f'ROC curve (AUC = {auc:.2f})')
-    # plt.plot([0, 1], [0, 1], color='gray', lw=2, linestyle='--')
-    # plt.xlim([0.0, 1.0])
-    # plt.ylim([0.0, 1.0])
-    # plt.xlabel('False Positive Rate')
-    # plt.ylabel('True Positive Rate')
-    # plt.title('Receiver Operating Characteristic (ROC)')
-    # plt.legend(loc="lower right")
-    # plt.show()
-
     return acc, sen, spe, pre, f1, auc
 
 def rearrange_fit_L_New(timeSeries,windows_length=30,windows_gap =30):
@@ -59,9 +48,7 @@ def rearrange_fit_L_New(timeSeries,windows_length=30,windows_gap =30):
         A = A.reshape(timeSeries_shape[0], 1,1, timeSeries_shape[1], windows_length)
         data = np.concatenate((data,A),axis=2)
 
-
     return data
-
 
 def seed_it(seed):
     torch.backends.cudnn.deterministic = True
@@ -76,6 +63,7 @@ def seed_it(seed):
     torch.cuda.manual_seed_all(seed)
     os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
     torch.use_deterministic_algorithms(True)
+    
 def GetPearson(matrix):
     num_samples, num_rows, num_cols = matrix.size()
     output_matrix = torch.zeros(num_samples, num_rows, num_rows)
@@ -93,7 +81,6 @@ def GetPearson(matrix):
 
         output_matrix[i] = output
     return output_matrix.to(device)
-
 
 def save_model(model, optimizer, epoch, loss, save_path):
 
